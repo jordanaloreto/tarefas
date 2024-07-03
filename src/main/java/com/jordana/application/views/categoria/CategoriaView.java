@@ -1,8 +1,11 @@
 package com.jordana.application.views.categoria;
 
+import com.jordana.application.model.Categoria;
+import com.jordana.application.controller.CategoriaController;
 import com.vaadin.flow.component.Composite;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
@@ -16,7 +19,11 @@ import com.vaadin.flow.theme.lumo.LumoUtility.Gap;
 @Route(value = "my-view")
 public class CategoriaView extends Composite<VerticalLayout> {
 
+    private final CategoriaController categoriaController;
+
     public CategoriaView() {
+        this.categoriaController = new CategoriaController();
+
         TextField textField = new TextField();
         Button buttonPrimary = new Button();
         HorizontalLayout layoutRow = new HorizontalLayout();
@@ -35,5 +42,24 @@ public class CategoriaView extends Composite<VerticalLayout> {
         getContent().add(textField);
         getContent().add(buttonPrimary);
         getContent().add(layoutRow);
+
+        buttonPrimary.addClickListener(event -> {
+            String descricao = textField.getValue();
+            if (descricao == null || descricao.isEmpty()) {
+                Notification.show("Descrição não pode estar vazia.");
+                return;
+            }
+
+            Categoria categoria = new Categoria();
+            categoria.setDescricao(descricao);
+            boolean success = categoriaController.saveCategoria(categoria);
+
+            if (success) {
+                Notification.show("Categoria salva com sucesso!");
+                textField.clear();
+            } else {
+                Notification.show("Falha ao salvar a categoria.");
+            }
+        });
     }
 }

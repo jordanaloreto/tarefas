@@ -1,8 +1,11 @@
 package com.jordana.application.views.responsaveis;
 
+import com.jordana.application.model.Responsaveis;
+import com.jordana.application.controller.ResponsaveisController;
 import com.vaadin.flow.component.Composite;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
@@ -16,7 +19,11 @@ import com.vaadin.flow.theme.lumo.LumoUtility.Gap;
 @Route(value = "responsaveis")
 public class ResponsaveisView extends Composite<VerticalLayout> {
 
+    private final ResponsaveisController responsaveisController;
+
     public ResponsaveisView() {
+        this.responsaveisController = new ResponsaveisController();
+
         TextField textField = new TextField();
         Button buttonPrimary = new Button();
         HorizontalLayout layoutRow = new HorizontalLayout();
@@ -35,5 +42,24 @@ public class ResponsaveisView extends Composite<VerticalLayout> {
         getContent().add(textField);
         getContent().add(buttonPrimary);
         getContent().add(layoutRow);
+
+        buttonPrimary.addClickListener(event -> {
+            String nome = textField.getValue();
+            if (nome == null || nome.isEmpty()) {
+                Notification.show("Nome do Responsável não pode estar vazio.");
+                return;
+            }
+
+            Responsaveis responsavel = new Responsaveis();
+            responsavel.setNome(nome);
+            boolean success = responsaveisController.saveResponsavel(responsavel);
+
+            if (success) {
+                Notification.show("Responsável salvo com sucesso!");
+                textField.clear(); // Limpa o campo de texto
+            } else {
+                Notification.show("Falha ao salvar o responsável.");
+            }
+        });
     }
 }
