@@ -1,63 +1,39 @@
 package com.jordana.application.model;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 public class Tarefas {
 
-    private int id;
-    private Date dataTarefa;
-    private String descricaoTarefa;
-    private String observacao;
+    private String descricao;
+    private LocalDate dataTarefa;
     private String prioridade;
     private String status;
-    private Categoria categoria;
-    private Responsaveis responsavel;
+    private int categoriaId;
+    private int responsavelId;
 
-    // Construtores
-    public Tarefas() {}
-
-    public Tarefas(int id, Date dataTarefa, String descricaoTarefa, String observacao, String prioridade, String status, Categoria categoria, Responsaveis responsavel) {
-        this.id = id;
+    public Tarefas(String descricao, LocalDate dataTarefa, String prioridade, String status, int categoriaId, int responsavelId) {
+        this.descricao = descricao;
         this.dataTarefa = dataTarefa;
-        this.descricaoTarefa = descricaoTarefa;
-        this.observacao = observacao;
         this.prioridade = prioridade;
         this.status = status;
-        this.categoria = categoria;
-        this.responsavel = responsavel;
+        this.categoriaId = categoriaId;
+        this.responsavelId = responsavelId;
     }
 
-    // Getters e Setters
-    public int getId() {
-        return id;
+    public String getDescricao() {
+        return descricao;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setDescricao(String descricao) {
+        this.descricao = descricao;
     }
 
-    public Date getDataTarefa() {
+    public LocalDate getDataTarefa() {
         return dataTarefa;
     }
 
-    public void setDataTarefa(Date dataTarefa) {
+    public void setDataTarefa(LocalDate dataTarefa) {
         this.dataTarefa = dataTarefa;
-    }
-
-    public String getDescricaoTarefa() {
-        return descricaoTarefa;
-    }
-
-    public void setDescricaoTarefa(String descricaoTarefa) {
-        this.descricaoTarefa = descricaoTarefa;
-    }
-
-    public String getObservacao() {
-        return observacao;
-    }
-
-    public void setObservacao(String observacao) {
-        this.observacao = observacao;
     }
 
     public String getPrioridade() {
@@ -76,19 +52,19 @@ public class Tarefas {
         this.status = status;
     }
 
-    public Categoria getCategoria() {
-        return categoria;
+    public int getCategoriaId() {
+        return categoriaId;
     }
 
-    public void setCategoria(Categoria categoria) {
-        this.categoria = categoria;
+    public void setCategoriaId(int categoriaId) {
+        this.categoriaId = categoriaId;
     }
 
-    public Responsaveis getResponsavel() {
-        return responsavel;
+    public int getResponsavelId() {
+        return responsavelId;
     }
 
-    public void setResponsavel(Responsaveis responsavel) {
-        this.responsavel = responsavel;
+    public void setResponsavelId(int responsavelId) {
+        this.responsavelId = responsavelId;
     }
 }

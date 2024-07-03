@@ -28,69 +28,81 @@ public class ListaView extends Composite<VerticalLayout> {
 
     public ListaView() {
         FormLayout formLayout3Col = new FormLayout();
-        ComboBox comboBox = new ComboBox();
-        ComboBox comboBox2 = new ComboBox();
-        TextField textField = new TextField();
-        DatePicker datePicker = new DatePicker();
-        RadioButtonGroup radioGroup = new RadioButtonGroup();
-        CheckboxGroup checkboxGroup = new CheckboxGroup();
-        Button buttonPrimary = new Button();
-        Button buttonPrimary2 = new Button();
-        Button buttonPrimary3 = new Button();
+        ComboBox<String> comboBoxCategoria = new ComboBox<>();
+        ComboBox<String> comboBoxResponsavel = new ComboBox<>();
+        TextField textFieldTarefa = new TextField();
+        DatePicker datePickerData = new DatePicker();
+        RadioButtonGroup<String> radioGroupPrioridade = new RadioButtonGroup<>();
+        CheckboxGroup<String> checkboxGroupStatus = new CheckboxGroup<>();
+        Button buttonSave = new Button("Save");
+        Button buttonEdit = new Button("Edit");
+        Button buttonDelete = new Button("Delete");
+
         getContent().setWidth("100%");
         getContent().getStyle().set("flex-grow", "1");
+
         formLayout3Col.setWidth("100%");
         formLayout3Col.setResponsiveSteps(new ResponsiveStep("0", 1), new ResponsiveStep("250px", 2),
                 new ResponsiveStep("500px", 3));
-        comboBox.setLabel("Categoria");
-        comboBox.setWidth("min-content");
-        setComboBoxSampleData(comboBox);
-        comboBox2.setLabel("Responsável");
-        comboBox2.setWidth("min-content");
-        setComboBoxSampleData(comboBox2);
-        textField.setLabel("Tarefa");
-        textField.setWidth("min-content");
-        datePicker.setLabel("Date picker");
-        datePicker.setWidth("min-content");
-        radioGroup.setLabel("Prioridade");
-        radioGroup.setWidth("min-content");
-        radioGroup.setItems("Order ID", "Product Name", "Customer", "Status");
-        radioGroup.addThemeVariants(RadioGroupVariant.LUMO_VERTICAL);
-        checkboxGroup.setLabel("Status");
-        checkboxGroup.setWidth("min-content");
-        checkboxGroup.setItems("Order ID", "Product Name", "Customer", "Status");
-        checkboxGroup.addThemeVariants(CheckboxGroupVariant.LUMO_VERTICAL);
-        buttonPrimary.setText("Save");
-        buttonPrimary.setWidth("min-content");
-        buttonPrimary.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-        buttonPrimary2.setText("Edit");
-        buttonPrimary2.setWidth("min-content");
-        buttonPrimary2.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-        buttonPrimary3.setText("Delete");
-        buttonPrimary3.setWidth("min-content");
-        buttonPrimary3.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+
+        comboBoxCategoria.setLabel("Categoria");
+        comboBoxCategoria.setWidth("min-content");
+        setComboBoxCategoriaData(comboBoxCategoria);
+
+        comboBoxResponsavel.setLabel("Responsável");
+        comboBoxResponsavel.setWidth("min-content");
+        setComboBoxResponsavelData(comboBoxResponsavel);
+
+        textFieldTarefa.setLabel("Tarefa");
+        textFieldTarefa.setWidth("min-content");
+
+        datePickerData.setLabel("Data da Tarefa");
+        datePickerData.setWidth("min-content");
+
+        radioGroupPrioridade.setLabel("Prioridade");
+        radioGroupPrioridade.setWidth("min-content");
+        radioGroupPrioridade.setItems("Alta", "Média", "Baixa");
+        radioGroupPrioridade.addThemeVariants(RadioGroupVariant.LUMO_VERTICAL);
+
+        checkboxGroupStatus.setLabel("Status");
+        checkboxGroupStatus.setWidth("min-content");
+        checkboxGroupStatus.setItems("Finalizado", "Não começado", "Em andamento");
+        checkboxGroupStatus.addThemeVariants(CheckboxGroupVariant.LUMO_VERTICAL);
+
+        buttonSave.setWidth("min-content");
+        buttonSave.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+
+        buttonEdit.setWidth("min-content");
+        buttonEdit.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+
+        buttonDelete.setWidth("min-content");
+        buttonDelete.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+
         getContent().add(formLayout3Col);
-        formLayout3Col.add(comboBox);
-        formLayout3Col.add(comboBox2);
-        formLayout3Col.add(textField);
-        formLayout3Col.add(datePicker);
-        formLayout3Col.add(radioGroup);
-        formLayout3Col.add(checkboxGroup);
-        formLayout3Col.add(buttonPrimary);
-        formLayout3Col.add(buttonPrimary2);
-        formLayout3Col.add(buttonPrimary3);
+        formLayout3Col.add(comboBoxCategoria);
+        formLayout3Col.add(comboBoxResponsavel);
+        formLayout3Col.add(textFieldTarefa);
+        formLayout3Col.add(datePickerData);
+        formLayout3Col.add(radioGroupPrioridade);
+        formLayout3Col.add(checkboxGroupStatus);
+        formLayout3Col.add(buttonSave);
+        formLayout3Col.add(buttonEdit);
+        formLayout3Col.add(buttonDelete);
     }
 
-    record SampleItem(String value, String label, Boolean disabled) {
+    private void setComboBoxCategoriaData(ComboBox<String> comboBox) {
+        List<String> categorias = new ArrayList<>();
+        categorias.add("Categoria 1");
+        categorias.add("Categoria 2");
+        categorias.add("Categoria 3");
+        comboBox.setItems(categorias);
     }
 
-    private void setComboBoxSampleData(ComboBox comboBox) {
-        List<SampleItem> sampleItems = new ArrayList<>();
-        sampleItems.add(new SampleItem("first", "First", null));
-        sampleItems.add(new SampleItem("second", "Second", null));
-        sampleItems.add(new SampleItem("third", "Third", Boolean.TRUE));
-        sampleItems.add(new SampleItem("fourth", "Fourth", null));
-        comboBox.setItems(sampleItems);
-        comboBox.setItemLabelGenerator(item -> ((SampleItem) item).label());
+    private void setComboBoxResponsavelData(ComboBox<String> comboBox) {
+        List<String> responsaveis = new ArrayList<>();
+        responsaveis.add("Responsável 1");
+        responsaveis.add("Responsável 2");
+        responsaveis.add("Responsável 3");
+        comboBox.setItems(responsaveis);
     }
 }
