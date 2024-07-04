@@ -31,7 +31,9 @@ public class TarefaController {
     }
 
     public boolean saveTarefa(String categoria, String responsavel, String tarefa, String data,
-                              String prioridade, String status) {
-        return tarefaRepository.saveTarefa(categoria, responsavel, tarefa, data, prioridade, status);
-    }
+                          String prioridade, String status) {
+    return tarefaRepository.saveTarefa(categoria, responsavel, tarefa, data, prioridade, status);
+}
+
+
 }

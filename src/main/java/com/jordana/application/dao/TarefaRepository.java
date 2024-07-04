@@ -1,14 +1,17 @@
 package com.jordana.application.dao;
 
-import com.jordana.application.dao.DBConnection;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class TarefaRepository {
 
+    private static final Logger logger = LoggerFactory.getLogger(TarefaRepository.class);
     private final Connection connection;
 
     public TarefaRepository() throws SQLException {
@@ -22,18 +25,25 @@ public class TarefaRepository {
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             int categoriaId = getCategoriaIdByDescricao(categoria);
             int responsavelId = getResponsavelIdByNome(responsavel);
+            Date sqlDate = Date.valueOf(data);
 
             stmt.setInt(1, categoriaId);
             stmt.setInt(2, responsavelId);
             stmt.setString(3, descricao);
-            stmt.setString(4, data);
+            stmt.setDate(4, sqlDate);
             stmt.setString(5, prioridade);
             stmt.setString(6, status);
 
             int rowsInserted = stmt.executeUpdate();
-            return rowsInserted > 0;
+            if (rowsInserted > 0) {
+                logger.info("Tarefa salva com sucesso: {}, {}, {}, {}, {}, {}", categoria, responsavel, descricao, data, prioridade, status);
+                return true;
+            } else {
+                logger.warn("Nenhuma tarefa foi inserida: {}, {}, {}, {}, {}, {}", categoria, responsavel, descricao, data, prioridade, status);
+                return false;
+            }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Erro ao salvar a tarefa: {}", e.getMessage(), e);
             return false;
         }
     }

@@ -3,7 +3,10 @@ package com.jordana.application.dao;
 import com.jordana.application.model.Categoria;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class CategoriaRepository {
     private Connection connection;
@@ -22,5 +25,19 @@ public class CategoriaRepository {
             e.printStackTrace();
             return false;
         }
+    }
+
+    public List<String> getAllDescricoes() {
+        List<String> descricoes = new ArrayList<>();
+        String sql = "SELECT descricao FROM Categoria";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            ResultSet result = stmt.executeQuery();
+            while (result.next()) {
+                descricoes.add(result.getString("descricao"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return descricoes;
     }
 }

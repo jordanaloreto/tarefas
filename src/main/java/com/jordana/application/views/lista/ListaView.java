@@ -1,5 +1,6 @@
 package com.jordana.application.views.lista;
 
+import com.jordana.application.controller.TarefaController;
 import com.vaadin.flow.component.Composite;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
@@ -17,7 +18,8 @@ import com.vaadin.flow.router.Menu;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteAlias;
-import java.util.ArrayList;
+import com.vaadin.flow.component.notification.Notification;
+
 import java.util.List;
 
 @PageTitle("Lista")
@@ -26,7 +28,11 @@ import java.util.List;
 @RouteAlias(value = "")
 public class ListaView extends Composite<VerticalLayout> {
 
+    private final TarefaController tarefaController;
+
     public ListaView() {
+        tarefaController = new TarefaController();
+
         FormLayout formLayout3Col = new FormLayout();
         ComboBox<String> comboBoxCategoria = new ComboBox<>();
         ComboBox<String> comboBoxResponsavel = new ComboBox<>();
@@ -71,6 +77,11 @@ public class ListaView extends Composite<VerticalLayout> {
 
         buttonSave.setWidth("min-content");
         buttonSave.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        buttonSave.addClickListener(e -> saveTarefa(comboBoxCategoria.getValue(), comboBoxResponsavel.getValue(), 
+                                            textFieldTarefa.getValue(), datePickerData.getValue().toString(), 
+                                            radioGroupPrioridade.getValue(), 
+                                            String.join(", ", checkboxGroupStatus.getValue())));
+
 
         buttonEdit.setWidth("min-content");
         buttonEdit.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
@@ -91,18 +102,23 @@ public class ListaView extends Composite<VerticalLayout> {
     }
 
     private void setComboBoxCategoriaData(ComboBox<String> comboBox) {
-        List<String> categorias = new ArrayList<>();
-        categorias.add("Categoria 1");
-        categorias.add("Categoria 2");
-        categorias.add("Categoria 3");
+        List<String> categorias = tarefaController.getAllCategorias();
         comboBox.setItems(categorias);
     }
 
     private void setComboBoxResponsavelData(ComboBox<String> comboBox) {
-        List<String> responsaveis = new ArrayList<>();
-        responsaveis.add("Responsável 1");
-        responsaveis.add("Responsável 2");
-        responsaveis.add("Responsável 3");
+        List<String> responsaveis = tarefaController.getAllResponsaveis();
         comboBox.setItems(responsaveis);
     }
+
+    private void saveTarefa(String categoria, String responsavel, String descricao, String data,
+                        String prioridade, String status) {
+    boolean success = tarefaController.saveTarefa(categoria, responsavel, descricao, data, prioridade, status);
+    if (success) {
+        Notification.show("Tarefa salva com sucesso!", 3000, Notification.Position.TOP_CENTER);
+    } else {
+        Notification.show("Erro ao salvar a tarefa.", 3000, Notification.Position.TOP_CENTER);
+    }
+}
+
 }
