@@ -104,6 +104,38 @@ public class CategoriaRepository {
         // Se houver um erro na consulta ou não houver resultado, retorne false, permitindo a exclusão.
         return false;
     }
+
+    public int getIdByDescricao(String descricao) {
+        String sql = "SELECT id FROM Categoria WHERE descricao = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, descricao);
+            ResultSet result = stmt.executeQuery();
+            if (result.next()) {
+                return result.getInt("id");
+            } else {
+                throw new SQLException("Categoria não encontrada: " + descricao);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return -1; // Erro
+        }
+    }
+
+    public String getDescricaoById(int id) {
+        String sql = "SELECT descricao FROM Categoria WHERE id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, id);
+            ResultSet result = stmt.executeQuery();
+            if (result.next()) {
+                return result.getString("descricao");
+            } else {
+                throw new SQLException("Categoria não encontrada: " + id);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null; // Erro
+        }
+    }
     
 
 }

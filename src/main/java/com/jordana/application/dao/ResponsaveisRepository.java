@@ -83,6 +83,38 @@ public class ResponsaveisRepository {
             return false;
         }
     }
+
+    public int getIdByNome(String nome) {
+        String sql = "SELECT id FROM Responsaveis WHERE nome = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, nome);
+            ResultSet result = stmt.executeQuery();
+            if (result.next()) {
+                return result.getInt("id");
+            } else {
+                throw new SQLException("Responsável não encontrado: " + nome);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return -1; // Erro
+        }
+    }
+
+    public String getNomeById(int id) {
+        String sql = "SELECT nome FROM Responsaveis WHERE id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, id);
+            ResultSet result = stmt.executeQuery();
+            if (result.next()) {
+                return result.getString("nome");
+            } else {
+                throw new SQLException("Responsável não encontrado: " + id);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null; // Erro
+        }
+    }
 }
 
 

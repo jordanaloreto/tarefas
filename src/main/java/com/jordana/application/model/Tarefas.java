@@ -4,6 +4,7 @@ import java.time.LocalDate;
 
 public class Tarefas {
 
+    private int id;
     private String descricao;
     private LocalDate dataTarefa;
     private String prioridade;
@@ -18,6 +19,25 @@ public class Tarefas {
         this.status = status;
         this.categoriaId = categoriaId;
         this.responsavelId = responsavelId;
+    }
+
+    // Adicione um construtor sem o campo `id` se necessário
+    public Tarefas(int id, String descricao, LocalDate dataTarefa, String prioridade, String status, int categoriaId, int responsavelId) {
+        this.id = id;
+        this.descricao = descricao;
+        this.dataTarefa = dataTarefa;
+        this.prioridade = prioridade;
+        this.status = status;
+        this.categoriaId = categoriaId;
+        this.responsavelId = responsavelId;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getDescricao() {

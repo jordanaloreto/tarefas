@@ -1,13 +1,12 @@
 package com.jordana.application.dao;
 
+import com.jordana.application.model.Tarefas;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.sql.Connection;
-import java.sql.Date;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class TarefaRepository {
 
@@ -18,28 +17,23 @@ public class TarefaRepository {
         this.connection = DBConnection.getInstance().getConnection();
     }
 
-    public boolean saveTarefa(String categoria, String responsavel, String descricao, String data,
-                              String prioridade, String status) {
+    public boolean saveTarefa(Tarefas tarefa) {
         String sql = "INSERT INTO Tarefas (categoria_id, responsavel_id, descricao_tarefa, data_tarefa, prioridade, status) " +
                      "VALUES (?, ?, ?, ?, ?, ?)";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            int categoriaId = getCategoriaIdByDescricao(categoria);
-            int responsavelId = getResponsavelIdByNome(responsavel);
-            Date sqlDate = Date.valueOf(data);
-
-            stmt.setInt(1, categoriaId);
-            stmt.setInt(2, responsavelId);
-            stmt.setString(3, descricao);
-            stmt.setDate(4, sqlDate);
-            stmt.setString(5, prioridade);
-            stmt.setString(6, status);
+            stmt.setInt(1, tarefa.getCategoriaId());
+            stmt.setInt(2, tarefa.getResponsavelId());
+            stmt.setString(3, tarefa.getDescricao());
+            stmt.setDate(4, Date.valueOf(tarefa.getDataTarefa()));
+            stmt.setString(5, tarefa.getPrioridade());
+            stmt.setString(6, tarefa.getStatus());
 
             int rowsInserted = stmt.executeUpdate();
             if (rowsInserted > 0) {
-                logger.info("Tarefa salva com sucesso: {}, {}, {}, {}, {}, {}", categoria, responsavel, descricao, data, prioridade, status);
+                logger.info("Tarefa salva com sucesso: {}", tarefa);
                 return true;
             } else {
-                logger.warn("Nenhuma tarefa foi inserida: {}, {}, {}, {}, {}, {}", categoria, responsavel, descricao, data, prioridade, status);
+                logger.warn("Nenhuma tarefa foi inserida: {}", tarefa);
                 return false;
             }
         } catch (SQLException e) {
@@ -48,27 +42,78 @@ public class TarefaRepository {
         }
     }
 
-    private int getCategoriaIdByDescricao(String descricao) throws SQLException {
-        String sql = "SELECT id FROM Categoria WHERE descricao = ?";
+    public boolean updateTarefa(Tarefas tarefa) {
+        String sql = "UPDATE Tarefas SET categoria_id = ?, responsavel_id = ?, descricao_tarefa = ?, data_tarefa = ?, prioridade = ?, status = ? " +
+                     "WHERE id = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setString(1, descricao);
-            ResultSet result = stmt.executeQuery();
-            if (result.next()) {
-                return result.getInt("id");
+            stmt.setInt(1, tarefa.getCategoriaId());
+            stmt.setInt(2, tarefa.getResponsavelId());
+            stmt.setString(3, tarefa.getDescricao());
+            stmt.setDate(4, Date.valueOf(tarefa.getDataTarefa()));
+            stmt.setString(5, tarefa.getPrioridade());
+            stmt.setString(6, tarefa.getStatus());
+            stmt.setInt(7, tarefa.getId());
+
+            int rowsUpdated = stmt.executeUpdate();
+            if (rowsUpdated > 0) {
+                logger.info("Tarefa atualizada com sucesso: {}", tarefa);
+                return true;
+            } else {
+                logger.warn("Nenhuma tarefa foi atualizada: {}", tarefa);
+                return false;
             }
-            throw new SQLException("Categoria não encontrada: " + descricao);
+        } catch (SQLException e) {
+            logger.error("Erro ao atualizar a tarefa: {}", e.getMessage(), e);
+            return false;
         }
     }
 
-    private int getResponsavelIdByNome(String nome) throws SQLException {
-        String sql = "SELECT id FROM Responsaveis WHERE nome = ?";
+    public boolean deleteTarefa(Tarefas tarefa) {
+        String sql = "DELETE FROM Tarefas WHERE id = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setString(1, nome);
-            ResultSet result = stmt.executeQuery();
-            if (result.next()) {
-                return result.getInt("id");
+            stmt.setInt(1, tarefa.getId());
+
+            int rowsDeleted = stmt.executeUpdate();
+            if (rowsDeleted > 0) {
+                logger.info("Tarefa deletada com sucesso: {}", tarefa);
+                return true;
+            } else {
+                logger.warn("Nenhuma tarefa foi deletada: {}", tarefa);
+                return false;
             }
-            throw new SQLException("Responsável não encontrado: " + nome);
+        } catch (SQLException e) {
+            logger.error("Erro ao deletar a tarefa: {}", e.getMessage(), e);
+            return false;
         }
+    }
+
+    public List<Tarefas> getAllTarefas() {
+        String sql = "SELECT t.id, t.descricao_tarefa, t.data_tarefa, t.prioridade, t.status, t.categoria_id, t.responsavel_id, " +
+                     "c.descricao AS categoria_descricao, r.nome AS responsavel_nome " +
+                     "FROM Tarefas t " +
+                     "JOIN Categoria c ON t.categoria_id = c.id " +
+                     "JOIN Responsaveis r ON t.responsavel_id = r.id";
+        List<Tarefas> tarefas = new ArrayList<>();
+
+        try (Statement stmt = connection.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+
+            while (rs.next()) {
+                Tarefas tarefa = new Tarefas(
+                    rs.getString("descricao_tarefa"),
+                    rs.getDate("data_tarefa").toLocalDate(),
+                    rs.getString("prioridade"),
+                    rs.getString("status"),
+                    rs.getInt("categoria_id"),
+                    rs.getInt("responsavel_id")
+                );
+                tarefa.setId(rs.getInt("id"));
+                tarefas.add(tarefa);
+            }
+        } catch (SQLException e) {
+            logger.error("Erro ao buscar todas as tarefas: {}", e.getMessage(), e);
+        }
+
+        return tarefas;
     }
 }
